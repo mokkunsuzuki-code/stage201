@@ -113,3 +113,29 @@ This project is licensed under the MIT License.
 See LICENSE file for details.
 
 EOF
+---
+
+## PoC Report (Internal)
+
+Generate a human-readable report from the latest PoC run log.
+
+```bash
+python3 tools/generate_poc_report.py
+sed -n '1,200p' out/reports/poc_report.md
+
+---
+
+## PoC Report (Internal)
+
+Generate a human-readable report from the latest PoC run log (`out/poc_logs/poc.jsonl`).
+
+```bash
+python3 tools/generate_poc_report.py
+sed -n '1,200p' out/reports/poc_report.md
+
+Notes:
+
+This report is internal (PoC design stage).
+
+Next step: convert placeholders into measured values (latency/availability) and attach evidence paths.
+
