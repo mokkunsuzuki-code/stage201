@@ -9,7 +9,7 @@ MIT License © 2025 Motohiro Suzuki
 - models deployment environments (QKD / Hybrid)
 - defines operational profiles
 - specifies failure behavior and logging
-- binds PoC outputs to Stage191 CI evidence and Claim(required_jobs)
+- binds PoC outputs to **Stage191 CI evidence** and **Claim(required_jobs)**
 
 > Internal document. Not intended as a public-facing implementation spec.
 
@@ -26,7 +26,7 @@ It validates:
 3. Fail-closed binding to Stage191 CI results
 4. Claim(required_jobs) satisfaction
 
-This PoC does NOT implement a production protocol.
+This PoC does **NOT** implement a production protocol.  
 It ensures traceability and audit alignment.
 
 ---
@@ -36,43 +36,50 @@ It ensures traceability and audit alignment.
 The runner exits with error if:
 
 - Stage191 CI outputs are missing or unreadable
-- Any Stage191 CI job failed
-- Any claim’s required_jobs is not satisfied
-- A profile invariant is violated
-- Failure injection is requested but profile disallows it
+- any Stage191 CI job failed
+- any claim’s `required_jobs` is not satisfied
+- a profile invariant is violated
+- failure injection is requested but the profile disallows it
 
-No "green PoC log" can exist without green CI evidence.
+No “green PoC log” can exist without green CI evidence.
 
 ---
 
 ## Repository Structure
 
-- poc_design.md
-- environments/
-- profiles/
-- failure_models/
-- logging/
-- metrics/
-- runtime/
+- `poc_design.md`
+- `environments/`
+- `profiles/`
+- `failure_models/`
+- `logging/`
+- `metrics/`
+- `runtime/`
+- `tools/`
 
-Generated outputs:
+Generated outputs (ignored by Git):
 
-- out/poc_logs/poc.jsonl (ignored by Git)
+- `out/poc_logs/poc.jsonl`
+- `out/reports/poc_report.md`
 
 ---
 
 ## Requirements
 
-Python 3.10+
+- Python 3.10+
 
-Optional dependency:
+Optional dependency (if needed by YAML parsing tools):
+
 ```bash
 python3 -m pip install --user pyyaml
 Run
-Baseline (no failure)
+
+Baseline (no failure):
+
 python3 runtime/poc_runner.py --profile hybrid_balanced --failure none
 tail -n 30 out/poc_logs/poc.jsonl
-Inject failure (resilience_test only)
+
+Inject failure (allowed only when profile enables it, e.g. resilience_test):
+
 python3 runtime/poc_runner.py --profile resilience_test --failure downgrade
 tail -n 50 out/poc_logs/poc.jsonl
 Stage191 Binding Inputs
@@ -98,38 +105,18 @@ failure_injected
 
 stage191_ci_summary
 
-stage191_ci_gate_passed / failed
+stage191_ci_gate_passed / stage191_ci_gate_failed
 
 claim_required_jobs_eval
 
-claim_gate_passed / failed
+claim_gate_passed / claim_gate_failed
 
 metrics_snapshot
 
-License
+PoC Report (Internal)
 
-This project is licensed under the MIT License.
+Generate a human-readable report from the latest PoC run log (out/poc_logs/poc.jsonl):
 
-See LICENSE file for details.
-
-EOF
----
-
-## PoC Report (Internal)
-
-Generate a human-readable report from the latest PoC run log.
-
-```bash
-python3 tools/generate_poc_report.py
-sed -n '1,200p' out/reports/poc_report.md
-
----
-
-## PoC Report (Internal)
-
-Generate a human-readable report from the latest PoC run log (`out/poc_logs/poc.jsonl`).
-
-```bash
 python3 tools/generate_poc_report.py
 sed -n '1,200p' out/reports/poc_report.md
 
@@ -139,3 +126,9 @@ This report is internal (PoC design stage).
 
 Next step: convert placeholders into measured values (latency/availability) and attach evidence paths.
 
+License
+
+This project is licensed under the MIT License.
+
+See LICENSE for details.
+EOF
